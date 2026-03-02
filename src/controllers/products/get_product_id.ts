@@ -1,13 +1,13 @@
 import { Context } from 'hono/dist/types/context';
 import { z } from 'zod';
-import { ClientFollowupNotesService } from '../../services/client_followup_notes.service';
+import { KardexService } from '../../services/products.service';
 import { getDb } from '../../config/db';
 
 const IdParamSchema = z.object({
   id: z.string().regex(/^\d+$/),
 });
 
-export const getClientFollowupNoteById = async (c: Context) => {
+export const getKardexById = async (c: Context) => {
   const ref = c.req.query('ref')?.trim();
   if (ref && process.env.NODE_ENV === 'production' && process.env.ENABLE_DB_REF !== 'true') {
     return c.json({ success: false, error: 'Not Found' }, 404);
@@ -25,7 +25,7 @@ export const getClientFollowupNoteById = async (c: Context) => {
   }
 
   const id = Number(parsed.data.id);
-  const data = await ClientFollowupNotesService.getById(db, id);
+  const data = await KardexService.getById(db, id);
 
   if (!data) {
     return c.json(

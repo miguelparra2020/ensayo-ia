@@ -1,18 +1,18 @@
 import { Context } from 'hono/dist/types/context';
 import { z } from 'zod';
-import { ClientFollowupNotesService } from '../../services/client_followup_notes.service';
+import { KardexService } from '../../services/products.service';
 import { getDb } from '../../config/db';
 
 const IdParamSchema = z.object({
   id: z.string().regex(/^\d+$/),
 });
 
-const DeleteClientFollowupNoteBodySchema = z.object({
+const DeleteKardexBodySchema = z.object({
   updated_by_user_name: z.string().optional(),
   updated_by_user_id: z.string().optional(),
 });
 
-export const deleteClientFollowupNote = async (c: Context) => {
+export const deleteKardex = async (c: Context) => {
   const ref = c.req.query('ref')?.trim();
   if (ref && process.env.NODE_ENV === 'production' && process.env.ENABLE_DB_REF !== 'true') {
     return c.json({ success: false, error: 'Not Found' }, 404);
@@ -30,7 +30,7 @@ export const deleteClientFollowupNote = async (c: Context) => {
   }
 
   const body = await c.req.json().catch(() => null);
-  const parsedBody = DeleteClientFollowupNoteBodySchema.safeParse(body);
+  const parsedBody = DeleteKardexBodySchema.safeParse(body);
 
   if (!parsedBody.success) {
     return c.json(
@@ -40,10 +40,7 @@ export const deleteClientFollowupNote = async (c: Context) => {
   }
 
   const id = Number(parsedParams.data.id);
-  const data = await ClientFollowupNotesService.deactivate(db, id, {
-    updated_by_user_name: parsedBody.data.updated_by_user_name,
-    updated_by_user_id: parsedBody.data.updated_by_user_id,
-  });
+  const data = await KardexService.deactivate(db, id);
 
   if (!data) {
     return c.json(

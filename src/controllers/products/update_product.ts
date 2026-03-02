@@ -1,6 +1,6 @@
 import { Context } from 'hono/dist/types/context';
-import { UpdateClientFollowupNoteSchema } from '../../schemas/client_followup_notes.schemas';
-import { ClientFollowupNotesService } from '../../services/client_followup_notes.service';
+import { UpdateProductsSchema } from '../../schemas/products.schemas';
+import { KardexService } from '../../services/products.service';
 import { getDb } from '../../config/db';
 import { z } from 'zod';
 
@@ -8,7 +8,7 @@ const IdParamSchema = z.object({
   id: z.string().regex(/^\d+$/),
 });
 
-export const updateClientFollowupNote = async (c: Context) => {
+export const updateKardex = async (c: Context) => {
   const ref = c.req.query('ref')?.trim();
   if (ref && process.env.NODE_ENV === 'production' && process.env.ENABLE_DB_REF !== 'true') {
     return c.json({ success: false, error: 'Not Found' }, 404);
@@ -26,7 +26,7 @@ export const updateClientFollowupNote = async (c: Context) => {
   }
 
   const body = await c.req.json().catch(() => null);
-  const parsedBody = UpdateClientFollowupNoteSchema.safeParse(body);
+  const parsedBody = UpdateProductsSchema.safeParse(body);
 
   if (!parsedBody.success) {
     return c.json(
@@ -36,7 +36,7 @@ export const updateClientFollowupNote = async (c: Context) => {
   }
 
   const id = Number(parsedParams.data.id);
-  const data = await ClientFollowupNotesService.update(db, id, parsedBody.data);
+  const data = await KardexService.update(db, id, parsedBody.data);
 
   if (!data) {
     return c.json(

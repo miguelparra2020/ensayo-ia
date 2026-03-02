@@ -1,10 +1,10 @@
 import { Context } from 'hono/dist/types/context';
-import { GetClientFollowupNotesQuerySchema } from '../../schemas/client_followup_notes.schemas';
-import { ClientFollowupNotesService } from '../../services/client_followup_notes.service';
+import { GetProductsQuerySchema } from '../../schemas/products.schemas';
+import { KardexService } from '../../services/products.service';
 import { getDb } from '../../config/db';
-import { PaginatedClientFollowupNotesResponseSchema } from '../../schemas/client_followup_notes.schemas';
+import { PaginatedProductsResponseSchema } from '../../schemas/products.schemas';
 
-export const getClientFollowupNotes = async (c: Context) => {
+export const getKardex = async (c: Context) => {
   const ref = c.req.query('ref')?.trim();
   if (ref && process.env.NODE_ENV === 'production' && process.env.ENABLE_DB_REF !== 'true') {
     return c.json({ success: false, error: 'Not Found' }, 404);
@@ -18,7 +18,7 @@ export const getClientFollowupNotes = async (c: Context) => {
     (query as any).clients_ids = query.clients_ids.split(',').map(id => id.trim());
   }
   
-  const parsed = GetClientFollowupNotesQuerySchema.safeParse(query);
+  const parsed = GetProductsQuerySchema.safeParse(query);
 
   if (!parsed.success) {
     return c.json(
@@ -33,17 +33,12 @@ export const getClientFollowupNotes = async (c: Context) => {
   const filters = {
     page,
     limit,
-    client_id: parsed.data.client_id,
-    clients_ids: parsed.data.clients_ids ? (Array.isArray(parsed.data.clients_ids) ? parsed.data.clients_ids : [parsed.data.clients_ids]) : undefined,
-    tag: parsed.data.tag,
-    created_by_user_id: parsed.data.created_by_user_id,
-    created_by_user_email: parsed.data.created_by_user_email,
-    client_name: parsed.data.client_name,
+    item_id: parsed.data.item_id,
     date_start: parsed.data.date_start,
     date_end: parsed.data.date_end,
   };
 
-  const { rows, total } = await ClientFollowupNotesService.getPaginated(db, filters);
+  const { rows, total } = await KardexService.getPaginated(db, filters);
 
   const totalPages = Math.ceil(total / limit);
   const haveNextPage = page < totalPages;

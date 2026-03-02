@@ -1,27 +1,23 @@
 import { OpenAPIHono, createRoute } from '@hono/zod-openapi';
 import { z } from 'zod';
-import { getWarranties } from '../controllers/warranties/get_warranties';
-import { createWarranty } from '../controllers/warranties/create_warranty';
-import { getWarrantyById } from '../controllers/warranties/get_warranty_by_id';
-import { updateWarranty } from '../controllers/warranties/update_warranty';
-import { deleteWarranty } from '../controllers/warranties/delete_warranty';
+import { getKardex } from '../controllers/products/get_products';
+import { createKardex } from '../controllers/products/create_products';
+import { getKardexById } from '../controllers/products/get_product_id';
+import { updateKardex } from '../controllers/products/update_product';
+import { deleteKardex } from '../controllers/products/delete_products';
 import {
-  CreateWarrantySchema,
-  GetWarrantiesQuerySchema,
-  PaginatedWarrantiesResponseSchema,
-  UpdateWarrantySchema,
-} from '../schemas/warranties.schemas';
+  CreateProductsSchema,
+  GetProductsQuerySchema,
+  PaginatedProductsResponseSchema,
+  UpdateProductsSchema,
+
+} from '../schemas/products.schemas';
 import { ErrorResponse, SuccessResponse } from '../schemas/response.schemas';
 
 const router = new OpenAPIHono();
 
 const IdParamSchema = z.object({
   id: z.string().regex(/^\d+$/),
-});
-
-const DeleteWarrantyBodySchema = z.object({
-  user_updated_name: z.string().optional(),
-  user_updated_id: z.string().optional(),
 });
 
 const RefQuerySchema = z.object({
@@ -33,16 +29,16 @@ router.openapi(
     method: 'get',
     path: '/',
     request: {
-      query: GetWarrantiesQuerySchema,
+      query: GetProductsQuerySchema,
     },
     responses: {
       200: {
         content: {
           'application/json': {
-            schema: PaginatedWarrantiesResponseSchema,
+            schema: PaginatedProductsResponseSchema,
           },
         },
-        description: 'List warranties',
+        description: 'List kardex with pagination',
       },
       400: {
         content: {
@@ -62,53 +58,7 @@ router.openapi(
       },
     },
   }),
-  getWarranties as any
-);
-
-router.openapi(
-  createRoute({
-    method: 'get',
-    path: '/{id}',
-    request: {
-      params: IdParamSchema,
-      query: RefQuerySchema,
-    },
-    responses: {
-      200: {
-        content: {
-          'application/json': {
-            schema: SuccessResponse,
-          },
-        },
-        description: 'Get warranty by id',
-      },
-      400: {
-        content: {
-          'application/json': {
-            schema: ErrorResponse,
-          },
-        },
-        description: 'Bad Request',
-      },
-      404: {
-        content: {
-          'application/json': {
-            schema: ErrorResponse,
-          },
-        },
-        description: 'Not Found',
-      },
-      500: {
-        content: {
-          'application/json': {
-            schema: ErrorResponse,
-          },
-        },
-        description: 'Internal Server Error',
-      },
-    },
-  }),
-  getWarrantyById as any
+  getKardex as any
 );
 
 router.openapi(
@@ -120,7 +70,7 @@ router.openapi(
       body: {
         content: {
           'application/json': {
-            schema: CreateWarrantySchema,
+            schema: CreateProductsSchema,
           },
         },
       },
@@ -152,8 +102,9 @@ router.openapi(
       },
     },
   }),
-  createWarranty as any
+  createKardex as any
 );
+
 
 router.openapi(
   createRoute({
@@ -165,7 +116,7 @@ router.openapi(
       body: {
         content: {
           'application/json': {
-            schema: UpdateWarrantySchema,
+            schema: UpdateProductsSchema,
           },
         },
       },
@@ -205,7 +156,7 @@ router.openapi(
       },
     },
   }),
-  updateWarranty as any
+  updateKardex as any
 );
 
 router.openapi(
@@ -218,7 +169,7 @@ router.openapi(
       body: {
         content: {
           'application/json': {
-            schema: UpdateWarrantySchema,
+            schema: UpdateProductsSchema,
           },
         },
       },
@@ -258,7 +209,7 @@ router.openapi(
       },
     },
   }),
-  updateWarranty as any
+  updateKardex as any
 );
 
 router.openapi(
@@ -271,7 +222,10 @@ router.openapi(
       body: {
         content: {
           'application/json': {
-            schema: DeleteWarrantyBodySchema,
+            schema: z.object({
+              updated_by_user_name: z.string().optional(),
+              updated_by_user_id: z.string().optional(),
+            }),
           },
         },
         required: false,
@@ -312,7 +266,53 @@ router.openapi(
       },
     },
   }),
-  deleteWarranty as any
+  deleteKardex as any
+);
+
+router.openapi(
+  createRoute({
+    method: 'get',
+    path: '/{id}',
+    request: {
+      params: IdParamSchema,
+      query: RefQuerySchema,
+    },
+    responses: {
+      200: {
+        content: {
+          'application/json': {
+            schema: SuccessResponse,
+          },
+        },
+        description: 'Get kardex by id',
+      },
+      400: {
+        content: {
+          'application/json': {
+            schema: ErrorResponse,
+          },
+        },
+        description: 'Bad Request',
+      },
+      404: {
+        content: {
+          'application/json': {
+            schema: ErrorResponse,
+          },
+        },
+        description: 'Not Found',
+      },
+      500: {
+        content: {
+          'application/json': {
+            schema: ErrorResponse,
+          },
+        },
+        description: 'Internal Server Error',
+      },
+    },
+  }),
+  getKardexById as any
 );
 
 export default router;

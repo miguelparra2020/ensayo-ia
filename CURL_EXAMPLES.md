@@ -23,7 +23,7 @@ curl --request GET \
 **Producción:**
 ```bash
 curl --request GET \
-  --url 'https://hono-back-supabase-client-followup.vercel.app/api/v1/invoices?page=1&itemsPerPage=10' \
+  --url 'https://hbsb1-kardex.vercel.app/api/v1/invoices?page=1&itemsPerPage=10' \
   --header 'accept: application/json'
 ```
 

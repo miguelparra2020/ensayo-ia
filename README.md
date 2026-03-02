@@ -40,7 +40,7 @@ cp .env.example .env
 ```env
 PORT=3001
 NODE_ENV=development
-PRODUCTION_URL=https://hono-back-supabase-client-followup.vercel.app
+PRODUCTION_URL=https://hbsb1-kardex.vercel.app
 CORS_ORIGIN=*
 
 # Aliado API Configuration
@@ -68,7 +68,7 @@ npm start
 Una vez que el servidor esté corriendo, puedes acceder a la documentación interactiva de Swagger en:
 
 - **Desarrollo**: http://localhost:3001/api/v1/doc
-- **Producción**: https://hono-back-supabase-client-followup.vercel.app/api/v1/doc
+- **Producción**: https://hbsb1-kardex.vercel.app/api/v1/doc
 
 ## 🔌 Endpoints Disponibles
 

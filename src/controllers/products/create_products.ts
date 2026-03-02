@@ -1,9 +1,9 @@
 import { Context } from 'hono/dist/types/context';
-import { CreateWarrantySchema } from '../../schemas/warranties.schemas';
-import { WarrantiesService } from '../../services/warranties.service';
+import { CreateProductsSchema } from '../../schemas/products.schemas';
+import { KardexService } from '../../services/products.service';
 import { getDb } from '../../config/db';
 
-export const createWarranty = async (c: Context) => {
+export const createKardex = async (c: Context) => {
   const ref = c.req.query('ref')?.trim();
   if (ref && process.env.NODE_ENV === 'production' && process.env.ENABLE_DB_REF !== 'true') {
     return c.json({ success: false, error: 'Not Found' }, 404);
@@ -11,7 +11,7 @@ export const createWarranty = async (c: Context) => {
   const db = getDb(ref);
 
   const body = await c.req.json().catch(() => null);
-  const parsed = CreateWarrantySchema.safeParse(body);
+  const parsed = CreateProductsSchema.safeParse(body);
 
   if (!parsed.success) {
     return c.json(
@@ -20,6 +20,6 @@ export const createWarranty = async (c: Context) => {
     );
   }
 
-  const data = await WarrantiesService.create(db, parsed.data);
+  const data = await KardexService.create(db, parsed.data);
   return c.json({ success: true, data }, 201);
 };
