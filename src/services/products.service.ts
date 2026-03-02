@@ -82,6 +82,21 @@ export class KardexService {
 
   // Crear nueva nota
   static async create(db: Pool, data: any) {
+    // Validar si invoice_id e item_id existen
+    if (data.invoice_id && data.item_id) {
+      const { rows: existingRows } = await db.query(
+        `
+        SELECT id FROM kardex 
+        WHERE invoice_id = $1 AND item_id = $2 AND deleted_at IS NULL
+        `,
+        [data.invoice_id, data.item_id]
+      );
+
+      if (existingRows.length > 0) {
+        throw new Error('Ya existe un registro con este invoice_id e item_id');
+      }
+    }
+
     const { rows } = await db.query(
       `
       INSERT INTO kardex (
