@@ -110,6 +110,49 @@ router.openapi(
 
 router.openapi(
   createRoute({
+    method: 'get',
+    path: '/quantity_by_month',
+    request: {
+      query: GetProductsQuantityByMonthQuerySchema,
+    },
+    responses: {
+      200: {
+        content: {
+          'application/json': {
+            schema: z.object({
+              success: z.boolean(),
+              data: z.array(z.object({
+                month: z.string(),
+                quantity: z.number()
+              }))
+            }),
+          },
+        },
+        description: 'Get products quantity by month for last 12 months',
+      },
+      400: {
+        content: {
+          'application/json': {
+            schema: ErrorResponse,
+          },
+        },
+        description: 'Bad Request',
+      },
+      500: {
+        content: {
+          'application/json': {
+            schema: ErrorResponse,
+          },
+        },
+        description: 'Internal Server Error',
+      },
+    },
+  }),
+  getProductsQuantityByMonth as any
+);
+
+router.openapi(
+  createRoute({
     method: 'post',
     path: '/',
     request: {
@@ -362,48 +405,7 @@ router.openapi(
   getKardexById as any
 );
 
-router.openapi(
-  createRoute({
-    method: 'get',
-    path: '/quantity_by_month',
-    request: {
-      query: GetProductsQuantityByMonthQuerySchema,
-    },
-    responses: {
-      200: {
-        content: {
-          'application/json': {
-            schema: z.object({
-              success: z.boolean(),
-              data: z.array(z.object({
-                month: z.string(),
-                quantity: z.number()
-              }))
-            }),
-          },
-        },
-        description: 'Get products quantity by month for last 12 months',
-      },
-      400: {
-        content: {
-          'application/json': {
-            schema: ErrorResponse,
-          },
-        },
-        description: 'Bad Request',
-      },
-      500: {
-        content: {
-          'application/json': {
-            schema: ErrorResponse,
-          },
-        },
-        description: 'Internal Server Error',
-      },
-    },
-  }),
-  getProductsQuantityByMonth as any
-);
+
 
 
 
