@@ -62,7 +62,6 @@ export const GetProductsQuerySchema = z.object({
 export const GetProductsNamesQuerySchema = z.object({
   ref: z.string().min(1, 'ref is required'),
 });
-
 /**
  * ============================
  * RESPONSE

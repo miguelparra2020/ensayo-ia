@@ -65,6 +65,49 @@ router.openapi(
 
 router.openapi(
   createRoute({
+    method: 'get',
+    path: '/products_names',
+    request: {
+      query: GetProductsNamesQuerySchema,
+    },
+    responses: {
+      200: {
+        content: {
+          'application/json': {
+            schema: z.object({
+              success: z.boolean(),
+              data: z.array(z.object({
+                code: z.string(),
+                combine_names: z.string()
+              }))
+            }),
+          },
+        },
+        description: 'Get products names with code and combine_names',
+      },
+      400: {
+        content: {
+          'application/json': {
+            schema: ErrorResponse,
+          },
+        },
+        description: 'Bad Request',
+      },
+      500: {
+        content: {
+          'application/json': {
+            schema: ErrorResponse,
+          },
+        },
+        description: 'Internal Server Error',
+      },
+    },
+  }),
+  getProductsNames as any
+);
+
+router.openapi(
+  createRoute({
     method: 'post',
     path: '/',
     request: {
@@ -317,47 +360,6 @@ router.openapi(
   getKardexById as any
 );
 
-router.openapi(
-  createRoute({
-    method: 'get',
-    path: '/products_names',
-    request: {
-      query: GetProductsNamesQuerySchema,
-    },
-    responses: {
-      200: {
-        content: {
-          'application/json': {
-            schema: z.object({
-              success: z.boolean(),
-              data: z.array(z.object({
-                code: z.string(),
-                combine_names: z.string()
-              }))
-            }),
-          },
-        },
-        description: 'Get products names with code and combine_names',
-      },
-      400: {
-        content: {
-          'application/json': {
-            schema: ErrorResponse,
-          },
-        },
-        description: 'Bad Request',
-      },
-      500: {
-        content: {
-          'application/json': {
-            schema: ErrorResponse,
-          },
-        },
-        description: 'Internal Server Error',
-      },
-    },
-  }),
-  getProductsNames as any
-);
+
 
 export default router;
