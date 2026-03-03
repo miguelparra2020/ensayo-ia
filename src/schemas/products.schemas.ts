@@ -62,6 +62,11 @@ export const GetProductsQuerySchema = z.object({
 export const GetProductsNamesQuerySchema = z.object({
   ref: z.string().min(1, 'ref is required'),
 });
+
+export const GetProductsQuantityByMonthQuerySchema = z.object({
+  ref: z.string().min(1, 'ref is required'),
+  item_id: z.string().min(1, 'item_id is required'),
+});
 /**
  * ============================
  * RESPONSE

@@ -6,10 +6,12 @@ import { getKardexById } from '../controllers/products/get_product_id';
 import { updateKardex } from '../controllers/products/update_product';
 import { deleteKardex } from '../controllers/products/delete_products';
 import { getProductsNames } from '../controllers/products/get_products_names';
+import { getProductsQuantityByMonth } from '../controllers/products/get_products_quantity_by_month';
 import {
   CreateProductsSchema,
   GetProductsQuerySchema,
   GetProductsNamesQuerySchema,
+  GetProductsQuantityByMonthQuerySchema,
   PaginatedProductsResponseSchema,
   UpdateProductsSchema,
 
@@ -358,6 +360,49 @@ router.openapi(
     },
   }),
   getKardexById as any
+);
+
+router.openapi(
+  createRoute({
+    method: 'get',
+    path: '/quantity_by_month',
+    request: {
+      query: GetProductsQuantityByMonthQuerySchema,
+    },
+    responses: {
+      200: {
+        content: {
+          'application/json': {
+            schema: z.object({
+              success: z.boolean(),
+              data: z.array(z.object({
+                month: z.string(),
+                quantity: z.number()
+              }))
+            }),
+          },
+        },
+        description: 'Get products quantity by month for last 12 months',
+      },
+      400: {
+        content: {
+          'application/json': {
+            schema: ErrorResponse,
+          },
+        },
+        description: 'Bad Request',
+      },
+      500: {
+        content: {
+          'application/json': {
+            schema: ErrorResponse,
+          },
+        },
+        description: 'Internal Server Error',
+      },
+    },
+  }),
+  getProductsQuantityByMonth as any
 );
 
 
