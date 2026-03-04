@@ -8,6 +8,7 @@ import { deleteKardex } from '../controllers/products/delete_products';
 import { getProductsNames } from '../controllers/products/get_products_names';
 import { getProductsQuantityByMonth } from '../controllers/products/get_products_quantity_by_month';
 import { getTopCustomersByProduct } from '../controllers/products/get_top_customers_by_product';
+import { createKardexBuy } from '../controllers/products/create_products_buy';
 import {
   CreateProductsSchema,
   GetProductsQuerySchema,
@@ -453,6 +454,50 @@ router.openapi(
     },
   }),
   deleteKardex as any
+);
+
+router.openapi(
+  createRoute({
+    method: 'post',
+    path: '/products_buy',
+    request: {
+      query: RefQuerySchema,
+      body: {
+        content: {
+          'application/json': {
+            schema: CreateProductsSchema,
+          },
+        },
+      },
+    },
+    responses: {
+      201: {
+        content: {
+          'application/json': {
+            schema: SuccessResponse,
+          },
+        },
+        description: 'Created',
+      },
+      400: {
+        content: {
+          'application/json': {
+            schema: ErrorResponse,
+          },
+        },
+        description: 'Bad Request',
+      },
+      500: {
+        content: {
+          'application/json': {
+            schema: ErrorResponse,
+          },
+        },
+        description: 'Internal Server Error',
+      },
+    },
+  }),
+  createKardexBuy as any
 );
 
 export default router;

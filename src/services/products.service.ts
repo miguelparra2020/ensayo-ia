@@ -195,3 +195,60 @@ export class KardexService {
   }
 
 }
+
+export class KardexBuyService {
+  // Crear nueva nota para kardex_buy
+  static async create(db: Pool, data: any) {
+    // Validar si invoice_id e item_id existen
+    if (data.invoice_id && data.item_id) {
+      const { rows: existingRows } = await db.query(
+        `
+        SELECT id FROM kardex_buy 
+        WHERE invoice_id = $1 AND item_id = $2 AND deleted_at IS NULL
+        `,
+        [data.invoice_id, data.item_id]
+      );
+
+      if (existingRows.length > 0) {
+        throw new Error('Ya existe un registro con este invoice_id e item_id');
+      }
+    }
+
+    const { rows } = await db.query(
+      `
+      INSERT INTO kardex_buy (
+        invoice_id,
+        invoice_date,
+        person_id,
+        person_identification,
+        person_name,
+        item_id,
+        item_code,
+        item_name,
+        quantity,
+        unit_value,
+        subtotal_amount
+      )
+      VALUES (
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
+      )
+      RETURNING *
+      `,
+      [
+        data.invoice_id ?? null,
+        data.invoice_date ?? null,
+        data.person_id ?? null,
+        data.person_identification ?? null,
+        data.person_name ?? null,
+        data.item_id ?? null,
+        data.item_code ?? null,
+        data.item_name ?? null,
+        data.quantity ?? null,
+        data.unit_value ?? null,
+        data.subtotal_amount ?? null,
+      ]
+    );
+
+    return rows[0];
+  }
+}
