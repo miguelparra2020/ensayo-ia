@@ -23,7 +23,7 @@ export const getKardexProductsBuyedQuantityByMonth = async (c: Context) => {
       WITH months AS (
         SELECT
           generate_series(
-            '2024-01-01'::date,
+            '2024-12-01'::date,
             DATE_TRUNC('month', CURRENT_DATE),
             INTERVAL '1 month'
           )::date AS month_start
