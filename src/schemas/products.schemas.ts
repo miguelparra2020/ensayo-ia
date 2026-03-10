@@ -162,6 +162,11 @@ export const UpdateKardexProductsBuyedSchema = z.object({
   subtotal_amount: z.number().optional(),
 });
 
+export const GetKardexProductsBuyedQuantityByMonthQuerySchema = z.object({
+  ref: z.string().min(1, 'ref is required'),
+  item_id: z.string().min(1, 'item_id is required'),
+});
+
 export const GetKardexProductsBuyedQuerySchema = z.object({
   ref: z.string().min(1, 'ref is required'),
   page: z.union([z.string(), z.number()]).optional(),

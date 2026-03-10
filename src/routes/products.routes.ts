@@ -12,6 +12,7 @@ import { getAllAliadoProducts } from '../controllers/aliado_products/get_all_ali
 // Kardex Products Buyed Controllers
 import { getKardexProductsBuyed } from '../controllers/kardex_products_buyed/get_kardex_products_buyed';
 import { getKardexProductsBuyedById } from '../controllers/kardex_products_buyed/get_kardex_products_buyed_id';
+import { getKardexProductsBuyedQuantityByMonth } from '../controllers/kardex_products_buyed/get_kardex_products_buyed_quantity_by_month';
 import { createKardexProductsBuyed } from '../controllers/kardex_products_buyed/create_kardex_products_buyed';
 import { updateKardexProductsBuyed } from '../controllers/kardex_products_buyed/update_kardex_products_buyed';
 import { deleteKardexProductsBuyed } from '../controllers/kardex_products_buyed/delete_kardex_products_buyed';
@@ -31,6 +32,7 @@ import {
   CreateKardexProductsBuyedSchema,
   UpdateKardexProductsBuyedSchema,
   GetKardexProductsBuyedQuerySchema,
+  GetKardexProductsBuyedQuantityByMonthQuerySchema,
   CreateKardexProductsSoldSchema,
   UpdateKardexProductsSoldSchema,
   GetKardexProductsSoldQuerySchema,
@@ -162,6 +164,44 @@ router.openapi(
     },
   }),
   getKardexProductsBuyed as any
+);
+
+// kardex_products_buyed quantity by month
+router.openapi(
+  createRoute({
+    method: 'get',
+    path: '/kardex_products_buyed/quantity_by_month',
+    request: {
+      query: GetKardexProductsBuyedQuantityByMonthQuerySchema,
+    },
+    responses: {
+      200: {
+        content: {
+          'application/json': {
+            schema: SuccessResponse,
+          },
+        },
+        description: 'Quantity buyed per month (last 12 months) for a given item_id',
+      },
+      400: {
+        content: {
+          'application/json': {
+            schema: ErrorResponse,
+          },
+        },
+        description: 'Bad Request',
+      },
+      500: {
+        content: {
+          'application/json': {
+            schema: ErrorResponse,
+          },
+        },
+        description: 'Internal Server Error',
+      },
+    },
+  }),
+  getKardexProductsBuyedQuantityByMonth as any
 );
 
 // Routes GET by id
