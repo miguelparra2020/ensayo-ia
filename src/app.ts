@@ -43,8 +43,8 @@ apiV1.doc('/openapi.json', {
 
 apiV1.get('/doc', swaggerUI({ url: '/api/v1/openapi.json' }));
 
+apiV1.route('/ai', aiRouter);
 app.route('/api/v1', apiV1);
-app.route('/api/v1/ai', aiRouter);
 
 // 404 handler
 app.notFound((c) => {
