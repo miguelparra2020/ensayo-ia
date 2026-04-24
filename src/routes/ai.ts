@@ -4,6 +4,10 @@ import { z } from 'zod'
 import Groq from 'groq-sdk'
 import { config } from '../config/config'
 
+if (!config.groqApiKey) {
+  throw new Error('GROQ_API_KEY is not set')
+}
+
 const ai = new OpenAPIHono()
 const groq = new Groq({ apiKey: config.groqApiKey })
 
@@ -53,7 +57,10 @@ const chatRoute = createRoute({
   },
 })
 
-ai.openapi(chatRoute, (async (c) => {
+// The handler is cast as any at the openapi() call site because TypeScript infers
+// the 200 response as `never` when the route declares text/plain but stream() returns
+// a Response — neither RouteHandler<> nor Parameters<> inference can bridge the gap.
+const chatHandler = async (c: Parameters<Parameters<typeof ai.openapi<typeof chatRoute>>[1]>[0]) => {
   const { messages } = c.req.valid('json')
   try {
     const completion = await groq.chat.completions.create({
@@ -63,18 +70,25 @@ ai.openapi(chatRoute, (async (c) => {
       max_completion_tokens: 1024,
       top_p: 1,
       stream: true,
-      stop: null,
     })
-    return stream(c, async (s) => {
-      for await (const chunk of completion) {
-        const content = chunk.choices[0]?.delta?.content ?? ''
-        if (content) await s.write(content)
+    return stream(
+      c,
+      async (s) => {
+        for await (const chunk of completion) {
+          const content = chunk.choices[0]?.delta?.content ?? ''
+          if (content) await s.write(content)
+        }
+      },
+      async (err) => {
+        console.error('Stream error:', err)
       }
-    }) as any
+    ) as any
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error'
     return c.json({ success: false as const, error: message }, 500)
   }
-}) as any)
+}
+
+ai.openapi(chatRoute, chatHandler as any)
 
 export default ai
