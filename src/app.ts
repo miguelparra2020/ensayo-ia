@@ -4,6 +4,7 @@ import { swaggerUI } from '@hono/swagger-ui';
 import { OpenAPIHono } from '@hono/zod-openapi';
 import { logger } from './middlewares/logger';
 import { config } from './config/config';
+import aiRouter from './routes/ai';
 
 const app = new Hono();
 const apiV1 = new OpenAPIHono();
@@ -43,6 +44,7 @@ apiV1.doc('/openapi.json', {
 apiV1.get('/doc', swaggerUI({ url: '/api/v1/openapi.json' }));
 
 app.route('/api/v1', apiV1);
+app.route('/api/v1/ai', aiRouter);
 
 // 404 handler
 app.notFound((c) => {
